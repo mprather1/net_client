@@ -14,16 +14,39 @@ socket.on('connect', () => {
   logger.info(chalk.magenta('connected...'))
 })
 socket.on('close', handleClose)
-const remoteEmitter = DuplexEmitter(socket)
+const emitter = DuplexEmitter(socket)
 
-remoteEmitter.on('msg', onMessage)
+emitter.on('json-data', onNewData)
+emitter.on('confirmaiton', onConfirmation)
 
-function onMessage (msg) {
-  logger.info(chalk.yellow('message received...'))
-  console.log(msg)
-  socket.destroy()
+function onNewData (data) {
+  logger.info(chalk.yellow('data received...'))
+  
+  console.log(chalk.cyan("Users:"))
+  data.users.forEach((user) => {
+    console.log(user.name)
+  })
+  
+  console.log(chalk.blue("Data:"))
+  data.id.forEach((d) => {
+    console.log(d.id)
+  })
+  
+  emitGoodBye("sending goodbye...", function () {
+    emitter.emit('complete', 'transfer completed...')
+  })
 }
 
+function emitGoodBye (message, emit) {
+  logger.info(message)
+  emit()
+}
+
+function onConfirmation (msg) {
+  logger.info(msg)
+  socket.destroy()
+      
+}
 function handleClose () {
-  logger.info(chalk.cyan('connection closed...'))
+  logger.info(chalk.red('connection closed...'))
 }
