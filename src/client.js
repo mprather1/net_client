@@ -4,7 +4,7 @@ import logger from 'winston-color'
 import chalk from 'chalk'
 
 const s = new net.Socket()
-const port = process.env.PORT || 8000
+const port = process.env.SERVER_PORT || 55445
 const environment = process.env.NODE_ENV || 'development'
 const hostname = process.env.HOSTNAME
 
